@@ -523,3 +523,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 2007148242}
   moveSpeed: 5
+  pratolPoints:
+  - {x: 3, y: 3}
+  - {x: 3, y: -3}
+  - {x: -3, y: -3}
+  - {x: -3, y: 3}
+  pratolInCircles: 0

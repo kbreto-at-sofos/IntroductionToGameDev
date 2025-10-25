@@ -10,8 +10,13 @@ public class EnemyController : MonoBehaviour
     private static readonly int Speed = Animator.StringToHash("Speed");
     private Rigidbody2D _rigidbody;
     [SerializeField] private Animator animator;
-    [SerializeField] private float moveSpeed = 5f;
-    private Vector2 _destiny = new Vector2(3f, 3f);
+    [SerializeField] private float moveSpeed = 3f;
+    [SerializeField] private List<Vector2> pratolPoints;
+    [SerializeField] private bool pratolInCircles = true;
+    private int _currentPatrolIndex = 0;
+    private int _currentPatrolDirection = 1;
+    
+    private Vector2 _destiny = new Vector2(3,3);
 
     private void Awake()
     {
@@ -20,18 +25,48 @@ public class EnemyController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (Vector2.Distance(_rigidbody.position, _destiny) > 0.5f)
+        MoveTo(GetDestination());
+    }
+
+    private Vector2 GetDestination()
+    {
+        Vector2 currentPatrolPoint = pratolPoints[_currentPatrolIndex];
+        if (Vector2.Distance(_rigidbody.position, currentPatrolPoint) <= 0.5f)
         {
-            var moveVector = (_destiny - _rigidbody.position).normalized * moveSpeed;
-            _rigidbody.velocity = moveVector;
-            
-            animator.SetFloat(Horizontal, moveVector.x);
-            animator.SetFloat(Vertical, moveVector.y);
-            animator.SetFloat(Speed, moveVector.SqrMagnitude());
+            if (pratolInCircles)
+            {
+                _currentPatrolIndex = _currentPatrolIndex + 1 >= pratolPoints.Count ? 0 : _currentPatrolIndex + 1;
+            }
+            else
+            {
+                var nextIndex = _currentPatrolIndex + _currentPatrolDirection;
+                if (nextIndex >= pratolPoints.Count || nextIndex < 0)
+                {
+                    _currentPatrolDirection *= -1;
+                } 
+                _currentPatrolIndex += _currentPatrolDirection;
+            }
+            return pratolPoints[_currentPatrolIndex];
         }
         else
         {
-            _destiny = -_destiny;
+            return currentPatrolPoint;
         }
     }
+
+    private void MoveTo(Vector2 destiny)
+    {
+        var moveVector = (destiny - _rigidbody.position).normalized * moveSpeed;
+        _rigidbody.velocity = moveVector;
+        
+        SetAnimatorVariables(moveVector);
+    }
+
+    private void SetAnimatorVariables(Vector2 moveVector)
+    {
+        animator.SetFloat(Horizontal, moveVector.x);
+        animator.SetFloat(Vertical, moveVector.y);
+        animator.SetFloat(Speed, moveVector.SqrMagnitude());
+    }
+    
 }
