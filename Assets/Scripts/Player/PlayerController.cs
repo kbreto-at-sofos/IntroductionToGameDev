@@ -6,8 +6,12 @@ public class PlayerController : MonoBehaviour
     private static readonly int Horizontal = Animator.StringToHash("Horizontal");
     private static readonly int Vertical = Animator.StringToHash("Vertical");
     private static readonly int Speed = Animator.StringToHash("Speed");
+    private static readonly int LastVertical = Animator.StringToHash("LastVertical");
+    private static readonly int LastHorizontal = Animator.StringToHash("LastHorizontal");
     private Rigidbody2D _rigidbody;
     private Vector2 _moveInput;
+    
+    public Vector2 facingDirection;
 
     [SerializeField] private Animator animator;
     [SerializeField] private float moveSpeed = 5f; 
@@ -19,15 +23,41 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+
+        // SetMoveVector();
         _rigidbody.velocity = _moveInput * (moveSpeed);
         
+        SetAnimator();
+    }
+
+    private void SetAnimator()
+    {
         animator.SetFloat(Horizontal, _moveInput.x);
         animator.SetFloat(Vertical, _moveInput.y);
         animator.SetFloat(Speed, _moveInput.SqrMagnitude());
+        animator.SetFloat(LastHorizontal,  PlayerStats.FacingDirection.x);
+        animator.SetFloat(LastVertical,  PlayerStats.FacingDirection.y);
     }
+
+    private void SetMoveVector()
+    {
+        // this allows diagonal facing i'd love to see a ways to do this with inputsystem
+        _moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        if (_moveInput != Vector2.zero)
+        {
+            PlayerStats.FacingDirection = _moveInput.normalized;
+        }
+    }
+
 
     private void OnMove(InputValue inputValue)
     {
+        
         _moveInput = inputValue.Get<Vector2>();
+        Debug.Log(_moveInput);
+        if (_moveInput != Vector2.zero)
+        {
+            PlayerStats.FacingDirection = _moveInput.normalized;
+        }
     }
 }
