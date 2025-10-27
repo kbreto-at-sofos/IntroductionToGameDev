@@ -1,4 +1,6 @@
 ﻿public enum GameEvent
 {   
-    OnDied
+    OnDied,
+    OnDamage,
+    OnHealthChanged
 }

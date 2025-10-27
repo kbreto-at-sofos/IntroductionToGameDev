@@ -1,11 +1,24 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class HealthController : MonoBehaviour
 {
+    public UnityEvent onDied;
     [SerializeField] private float maxHealth = 100f;
     [SerializeField] private float currentHealth = 100f;
+    public HealthBarUI healthBarUI;
+
+    public bool IsInvincible { get; set; } = false;
+    private InvincibilityController _invincibilityController;
+    
+
+    private void Awake()
+    {
+        _invincibilityController = GetComponent<InvincibilityController>();
+    }
 
     public float RemainingHealthPercentage()
     {
@@ -19,13 +32,26 @@ public class HealthController : MonoBehaviour
         {
             return;
         }
+
+        if (IsInvincible)
+        {
+            return;
+        }
+        
         
         currentHealth -= damage;
+        _invincibilityController?.StartInvincibility();
+        healthBarUI.UpdateHealthBar(this);
 
         if (currentHealth < 0)
         {
             currentHealth = 0;
-            EventSubscriber<GameObject>.Publish(GameEvent.OnDied, gameObject);
+        }
+
+        if (currentHealth == 0)
+        {
+            onDied?.Invoke();
+            // EventSubscriber<GameObject>.Publish(GameEvent.OnDied, gameObject);
         }
     }
 }

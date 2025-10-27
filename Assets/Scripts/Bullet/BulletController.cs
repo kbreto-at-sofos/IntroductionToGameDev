@@ -7,6 +7,7 @@ public class BulletController : MonoBehaviour
 {
     private Camera _camera;
     [SerializeField] protected float damage = 30f;
+    public LayerMask wallLayerMask;
 
     private void Awake()
     {
@@ -20,7 +21,20 @@ public class BulletController : MonoBehaviour
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        DamageCollisionIfComponent<EnemyController>(collision);
+        Debug.Log(collision.gameObject.name);
+        Debug.Log(collision.IsTouchingLayers(wallLayerMask));
+        if (collision.IsTouchingLayers(wallLayerMask))
+        {
+            if (gameObject.activeSelf)
+            {
+                //return bullet to the pool
+                ObjectPoolManager.ReturnObjectToPool(gameObject);
+            }
+        }
+        else
+        {
+            DamageCollisionIfComponent<EnemyController>(collision);
+        }
     }
 
     protected void DamageCollisionIfComponent<T>(Collider2D collision)

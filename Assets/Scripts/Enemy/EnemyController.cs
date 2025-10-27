@@ -9,6 +9,7 @@ public class EnemyController : MonoBehaviour
     private static readonly int Vertical = Animator.StringToHash("Vertical");
     private static readonly int Speed = Animator.StringToHash("Speed");
     private Rigidbody2D _rigidbody;
+    public HealthController healthController;
     [SerializeField] private Animator animator;
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private List<Vector2> pratolPoints;
@@ -25,13 +26,14 @@ public class EnemyController : MonoBehaviour
     private float _lastFireTime;
     
     
+    
+    
 
     
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
-        EventSubscriber<GameObject>.Subscribe(GameEvent.OnDied, OnDied);
     }
 
     private void FixedUpdate()
@@ -107,12 +109,10 @@ public class EnemyController : MonoBehaviour
         BulletController.ShootBullet(bulletPrefab, transform.position, playerDirection, bulletSpeed);
     }
 
-    private void OnDied(GameObject healthGameObject)
+    public void OnDied()
     {
-        if (healthGameObject.GetComponent<EnemyController>())
-        {
-            Destroy(gameObject);
-        }
+        Destroy(gameObject);
+        
     }
     
 }
