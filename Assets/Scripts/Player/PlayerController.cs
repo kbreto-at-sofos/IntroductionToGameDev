@@ -24,6 +24,8 @@ public class PlayerController : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
         _camera = Camera.main;
         PlayerStats.GameObject = gameObject;
+        
+        EventSubscriber<GameObject>.Subscribe(GameEvent.OnDied, OnDied);
     }
 
     private void FixedUpdate()
@@ -79,5 +81,14 @@ public class PlayerController : MonoBehaviour
             PlayerStats.FacingDirection = _moveInput.normalized;
         }
         
+    }
+
+    private void OnDied(GameObject healthGameObject)
+    {
+        if (healthGameObject.GetComponent<PlayerController>())
+        {   
+            Debug.Log("player died");
+            Time.timeScale = 0;
+        }
     }
 }

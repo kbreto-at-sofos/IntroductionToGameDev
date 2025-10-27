@@ -31,6 +31,7 @@ public class EnemyController : MonoBehaviour
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
+        EventSubscriber<GameObject>.Subscribe(GameEvent.OnDied, OnDied);
     }
 
     private void FixedUpdate()
@@ -104,6 +105,14 @@ public class EnemyController : MonoBehaviour
         Vector3 playerDirection = (playerPosition - gameObject.transform.position).normalized;
         
         BulletController.ShootBullet(bulletPrefab, transform.position, playerDirection, bulletSpeed);
+    }
+
+    private void OnDied(GameObject healthGameObject)
+    {
+        if (healthGameObject.GetComponent<EnemyController>())
+        {
+            Destroy(gameObject);
+        }
     }
     
 }

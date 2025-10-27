@@ -6,6 +6,7 @@ using UnityEngine;
 public class BulletController : MonoBehaviour
 {
     private Camera _camera;
+    [SerializeField] protected float damage = 30f;
 
     private void Awake()
     {
@@ -19,11 +20,24 @@ public class BulletController : MonoBehaviour
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        var enemyController = collision.GetComponent<EnemyController>();
-        if (enemyController && gameObject.activeSelf)
+        DamageCollisionIfComponent<EnemyController>(collision);
+    }
+
+    protected void DamageCollisionIfComponent<T>(Collider2D collision)
+    {
+        // check if collision has wanted component 
+        var component = collision.GetComponent<T>();
+        if (component != null && gameObject.activeSelf)
         {
+            //return bullet to the pool
             ObjectPoolManager.ReturnObjectToPool(gameObject);
-            Debug.Log("Enemy take damage");
+            
+            // remove health if health controller
+            var healthController = collision.GetComponent<HealthController>();
+            if (healthController)
+            {
+                healthController.TakeDamage(damage);
+            }
         }
     }
 
