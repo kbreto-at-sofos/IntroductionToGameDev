@@ -19,6 +19,8 @@ public class PlayerController : MonoBehaviour
 
     private Camera _camera;
 
+    public GameController gameController;
+
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
@@ -83,6 +85,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnDied()
     {
-        Debug.Log("player died");
+        Debug.Log("ondied");
+        gameController.GameOver();
     }
 }

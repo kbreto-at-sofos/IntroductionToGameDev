@@ -135,7 +135,7 @@ MonoBehaviour:
   pratolInCircles: 1
   bulletPrefab: {fileID: 5080281408882937406, guid: 9ae99646675656f4e9596f15431a2c8a, type: 3}
   bulletSpeed: 6
-  bulletDelay: 0.5
+  bulletDelay: 1
   playerShootDistance: 5
 --- !u!114 &-4378872105092555431
 MonoBehaviour:
