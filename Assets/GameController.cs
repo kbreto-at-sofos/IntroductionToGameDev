@@ -8,20 +8,16 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
-    [Header("timer")]
-    public float timer = 60f;
+    [Header("timer")] public float timer = 60f;
     public TMP_Text timerText;
-    
-    [Header("Game Over Screen")]
-    public TMP_Text resultText;
-    
+
+    [Header("Game Over Screen")] public TMP_Text resultText;
+
     public List<GameObject> levelEnemies = new List<GameObject>();
     public Image gameOverScreen;
-    
-    
-    
-    
-    
+    public Image pauseScreen;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,7 +27,6 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
         timer -= Time.deltaTime;
 
         UpdateTimer();
@@ -41,7 +36,8 @@ public class GameController : MonoBehaviour
         if (isVictory)
         {
             Victory();
-        }else if (timer <= 0)
+        }
+        else if (timer <= 0)
         {
             TimerExpired();
         }
@@ -49,15 +45,16 @@ public class GameController : MonoBehaviour
 
     public void OnPause()
     {
+        pauseScreen.gameObject.SetActive(true);
         Time.timeScale = 0;
     }
 
     public void OnResume()
     {
+        pauseScreen.gameObject.SetActive(false);
         Time.timeScale = 1;
     }
-    
-    
+
 
     private void UpdateTimer()
     {
@@ -72,6 +69,7 @@ public class GameController : MonoBehaviour
         gameOverScreen.gameObject.SetActive(true);
         Time.timeScale = 0;
     }
+
     public void TimerExpired()
     {
         // activa screen
@@ -93,6 +91,13 @@ public class GameController : MonoBehaviour
         Time.timeScale = 1;
         SceneManager.LoadScene("Scenes/GameScene");
         gameOverScreen.gameObject.SetActive(false);
-        
+    }
+
+    public void Quit()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+        Application.Quit();
     }
 }
