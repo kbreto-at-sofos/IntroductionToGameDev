@@ -8,6 +8,7 @@ public class PlayerStats : MonoBehaviour
     private PlayerStats _instance;
     
     public static Vector2 FacingDirection = Vector2.down;
+    public static GameObject GameObject;
 
     private void Awake()
     {

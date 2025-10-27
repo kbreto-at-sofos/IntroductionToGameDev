@@ -14,11 +14,16 @@ public class PlayerController : MonoBehaviour
     public Vector2 facingDirection;
 
     [SerializeField] private Animator animator;
-    [SerializeField] private float moveSpeed = 5f; 
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float screenBorder = 2f;
+
+    private Camera _camera; 
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
+        _camera = Camera.main;
+        PlayerStats.GameObject = gameObject;
     }
 
     private void FixedUpdate()
@@ -26,7 +31,7 @@ public class PlayerController : MonoBehaviour
 
         // SetMoveVector();
         _rigidbody.velocity = _moveInput * (moveSpeed);
-        
+        PreventPlayerGoingOffScreen();
         SetAnimator();
     }
 
@@ -49,15 +54,30 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void PreventPlayerGoingOffScreen()
+    {
+        Vector2 screenPos = _camera.WorldToScreenPoint(transform.position);
+
+        if ((screenPos.x < screenBorder && _moveInput.x < 0) || (screenPos.x > _camera.pixelWidth - screenBorder && _moveInput.x > 0))
+        {
+            _rigidbody.velocity = new Vector2(0, _moveInput.y);
+        }
+        
+        if ((screenPos.y < screenBorder && _moveInput.y < 0) || (screenPos.y > _camera.pixelHeight - screenBorder && _moveInput.y > 0))
+        {
+            _rigidbody.velocity = new Vector2(_moveInput.x, 0);
+        }
+    }
+
 
     private void OnMove(InputValue inputValue)
     {
         
         _moveInput = inputValue.Get<Vector2>();
-        Debug.Log(_moveInput);
         if (_moveInput != Vector2.zero)
         {
             PlayerStats.FacingDirection = _moveInput.normalized;
         }
+        
     }
 }

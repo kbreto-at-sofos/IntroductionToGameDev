@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,19 +6,21 @@ using UnityEngine.InputSystem;
 
 public class PlayerShoot : MonoBehaviour
 {
+
+    [Header("Bullet Settings")]
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private float bulletSpeed = 20f;
     [SerializeField] private float bulletDelay = 0.5f;
+    
     private float _lastFireTime;
-    [SerializeField] private float bulletReleaseDelay = 10;
-
     private bool _fireContinuously;
+    private bool _fireSingle;
 
     // Update is called once per frame
     void Update()
     {
         
-        if (_fireContinuously)
+        if (_fireContinuously || _fireSingle)
         {
             float timeSinceLastFire = Time.time - _lastFireTime;
 
@@ -25,32 +28,23 @@ public class PlayerShoot : MonoBehaviour
             {
                 FireBullet();
                 _lastFireTime = Time.time;
+                _fireSingle = false;
             }
         }
     }
 
     void FireBullet()
     {
-        var bullet = ObjectPoolManager.SpawnObject(bulletPrefab, transform.position, Quaternion.identity);
-        var bulletRigidbody = bullet.GetComponent<Rigidbody2D>();
-        
-        bulletRigidbody.velocity = bulletSpeed * PlayerStats.FacingDirection;
-
-        StartCoroutine(ReleaseObjectAfterTime(bullet, bulletReleaseDelay));
-    }
-
-    private IEnumerator ReleaseObjectAfterTime(GameObject obj, float time)
-    {
-        yield return new WaitForSeconds(time);
-
-        if (obj.activeSelf)
-        {
-            ObjectPoolManager.ReturnObjectToPool(obj);
-        }
+        BulletController.ShootBullet(bulletPrefab, transform.position, PlayerStats.FacingDirection, bulletSpeed);
     }
 
     private void OnFire(InputValue value)
     {
         _fireContinuously = value.isPressed;
+
+        if (value.isPressed)
+        {
+            _fireSingle = true;
+        }
     }
 }

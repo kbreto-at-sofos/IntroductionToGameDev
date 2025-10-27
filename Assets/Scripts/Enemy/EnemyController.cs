@@ -10,13 +10,23 @@ public class EnemyController : MonoBehaviour
     private static readonly int Speed = Animator.StringToHash("Speed");
     private Rigidbody2D _rigidbody;
     [SerializeField] private Animator animator;
-    [SerializeField] private float moveSpeed = 3f;
+    [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private List<Vector2> pratolPoints;
     [SerializeField] private bool pratolInCircles = true;
     private int _currentPatrolIndex = 0;
     private int _currentPatrolDirection = 1;
     
-    private Vector2 _destiny = new Vector2(3,3);
+    [Header("Bullet Settings")]
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private float bulletSpeed = 20f;
+    [SerializeField] private float bulletDelay = 0.5f;
+    [SerializeField] private float playerShootDistance = 5f;
+    
+    private float _lastFireTime;
+    
+    
+
+    
 
     private void Awake()
     {
@@ -25,7 +35,21 @@ public class EnemyController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        MoveTo(GetDestination());
+        if (CanShootPlayer())
+        {
+            MoveTo(gameObject.transform.position);
+            float timeSinceLastFire = Time.time - _lastFireTime;
+
+            if (timeSinceLastFire >= bulletDelay)
+            {
+                FireBullet();
+                _lastFireTime = Time.time;
+            }
+        }
+        else
+        {
+            MoveTo(GetDestination());
+        }
     }
 
     private Vector2 GetDestination()
@@ -67,6 +91,19 @@ public class EnemyController : MonoBehaviour
         animator.SetFloat(Horizontal, moveVector.x);
         animator.SetFloat(Vertical, moveVector.y);
         animator.SetFloat(Speed, moveVector.SqrMagnitude());
+    }
+
+    private bool CanShootPlayer()
+    {
+        return Vector3.Distance(PlayerStats.GameObject.transform.position, gameObject.transform.position) <= playerShootDistance;
+    }
+
+    private void FireBullet()
+    {
+        Vector3 playerPosition = PlayerStats.GameObject.transform.position;
+        Vector3 playerDirection = (playerPosition - gameObject.transform.position).normalized;
+        
+        BulletController.ShootBullet(bulletPrefab, transform.position, playerDirection, bulletSpeed);
     }
     
 }

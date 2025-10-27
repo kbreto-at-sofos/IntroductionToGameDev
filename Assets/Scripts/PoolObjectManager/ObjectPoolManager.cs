@@ -10,7 +10,6 @@ public class ObjectPoolManager : MonoBehaviour
     private GameObject _emptyHolder;
 
     private static GameObject _gameObjectsEmpty;
-    private static GameObject _soundFXEmpty;
 
     private static Dictionary<GameObject, ObjectPool<GameObject>> _objectPools;
     private static Dictionary<GameObject, GameObject> _cloneToPrefabMap;
@@ -18,7 +17,6 @@ public class ObjectPoolManager : MonoBehaviour
     public enum PoolType
     {
         GameObjects,
-        SoundFX
     }
 
     public static PoolType PoolingType;
@@ -37,9 +35,6 @@ public class ObjectPoolManager : MonoBehaviour
         
         _gameObjectsEmpty = new GameObject("GameObjects");
         _gameObjectsEmpty.transform.SetParent(_emptyHolder.transform);
-        
-        _soundFXEmpty = new GameObject("Sound FX");
-        _soundFXEmpty.transform.SetParent(_emptyHolder.transform);
 
         if (addToDontDestroyOnLoad)
         {
@@ -97,8 +92,6 @@ public class ObjectPoolManager : MonoBehaviour
         {
             case PoolType.GameObjects:
                 return _gameObjectsEmpty;
-            case PoolType.SoundFX:
-                return _soundFXEmpty;
             default:
                 return null;
         }

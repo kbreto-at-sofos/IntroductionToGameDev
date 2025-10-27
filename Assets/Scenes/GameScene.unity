@@ -318,10 +318,10 @@ GameObject:
   m_Component:
   - component: {fileID: 859974118}
   - component: {fileID: 859974117}
-  - component: {fileID: 859974116}
   - component: {fileID: 859974119}
   - component: {fileID: 859974120}
   - component: {fileID: 859974121}
+  - component: {fileID: 859974116}
   - component: {fileID: 859974122}
   - component: {fileID: 859974123}
   m_Layer: 0
@@ -346,6 +346,7 @@ MonoBehaviour:
   facingDirection: {x: 0, y: 0}
   animator: {fileID: 859974121}
   moveSpeed: 5
+  screenBorder: 30
 --- !u!212 &859974117
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -500,7 +501,6 @@ MonoBehaviour:
   bulletPrefab: {fileID: 5080281408882937406, guid: 087d23d8d0d7fe244adbcf4dfaeb5827, type: 3}
   bulletSpeed: 15
   bulletDelay: 0.5
-  bulletReleaseDelay: 20
 --- !u!114 &859974123
 MonoBehaviour:
   m_ObjectHideFlags: 0
